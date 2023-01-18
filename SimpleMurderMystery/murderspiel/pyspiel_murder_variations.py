@@ -95,7 +95,7 @@ class MurderMysteryVariationsState(pyspiel.State):
         self.accused = set()
         self.killer = -1
         self._move_no = 0
-        self._max_turns = 2 * N_PEOPLE
+        self._max_turns = N_PEOPLE
 
     # OpenSpiel (PySpiel) API functions are below. This is the standard set that
     # should be implemented by every sequential-move game with chance.
@@ -222,7 +222,7 @@ class MurderMysteryVariationsObserver:
         # dictionary of views onto the tensor, which may be of any shape.
         # Here the observation will depend on the player
         # The tensor comprises the following pieces given N players
-        # Each set describes the killer identity (N+1), the alive people (N), the dead people(N), the accused (N)
+        # Each set describes the killer identity (N), the alive people (N), the dead people(N), the accused (N)
         # The one-hot coding for killer has N elements, all will be zero if the killer is not assigned yet
         size = 4 * N_PEOPLE
         shape = (size)

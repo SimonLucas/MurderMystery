@@ -34,7 +34,7 @@ def test_variations():
     # there may be a bug in the game,
     # or could be that the trees get too big for the full naive
     # CFR algorithm when passing is allowed - not sure if that's likely
-    for allow_pass, allow_suicide in it.product([False], [False, True]):
+    for allow_pass, allow_suicide in it.product([False, True], [False, True]):
         print(allow_pass, allow_suicide)
         params = MurderMysteryParams(allow_pass, allow_suicide)
         game = MurderMysteryVariationsGame(game_params=params)
