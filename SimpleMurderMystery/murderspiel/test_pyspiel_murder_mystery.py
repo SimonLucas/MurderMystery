@@ -65,8 +65,8 @@ def get_cfr_policy(n: int):
     return average_policy
 
 
-cfr_policy = get_cfr_policy(10)
-
-print_policy(cfr_policy)
-print(len(cfr_policy.action_probability_array))
+# cfr_policy = get_cfr_policy(10)
+#
+# print_policy(cfr_policy)
+# print(len(cfr_policy.action_probability_array))
 
