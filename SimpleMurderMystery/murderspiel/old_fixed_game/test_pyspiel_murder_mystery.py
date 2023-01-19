@@ -1,10 +1,8 @@
-import numpy as np
-
 import pyspiel
 from open_spiel.python.algorithms import exploitability, cfr
 from open_spiel.python import policy as policy_lib
 
-from pyspiel_murder_mystery import MurderMysteryGame, MurderMysteryState
+from murderspiel.old_fixed_game.pyspiel_murder_mystery import MurderMysteryGame, MurderMysteryState
 import itertools as it
 
 game = MurderMysteryGame()

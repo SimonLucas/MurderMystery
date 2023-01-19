@@ -12,17 +12,6 @@ def print_policy(policy):
         print(f'{state:6}   p={probs}')
 
 
-def get_cfr_policy(game: MurderMysteryVariationsGame, n: int):
-    cfr_solver = cfr.CFRSolver(game)
-    average_policy = None
-    for i in range(n):
-        cfr_solver.evaluate_and_update_policy()
-        average_policy = cfr_solver.average_policy()
-        loss = exploitability.exploitability(game, average_policy)
-        print(f"Exploitability ({i}) = {loss}")
-    return average_policy
-
-
 # cfr_policy = get_cfr_policy(game, 10)
 #
 # print_policy(cfr_policy)

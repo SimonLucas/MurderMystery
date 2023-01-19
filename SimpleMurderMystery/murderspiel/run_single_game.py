@@ -5,6 +5,7 @@ import numpy.typing as npt
 from open_spiel.python.algorithms import exploitability, cfr
 from pyspiel import TabularPolicy
 
+from murderspiel.cfr_util import get_cfr_policy
 from murderspiel.pyspiel_murder_variations import MurderMysteryVariationsGame, MurderMysteryParams
 import itertools as it
 from open_spiel.python import policy as policy_lib
@@ -47,6 +48,7 @@ if __name__ == '__main__':
     # create a uniform random policy
     print(game.game_params)
     uniform_random_policy = policy_lib.TabularPolicy(game)
-    player_policies = [uniform_random_policy, uniform_random_policy]
+    cfr_policy = get_cfr_policy(game, 1)
+    player_policies = [uniform_random_policy, cfr_policy]
     result = run_game(game, player_policies)
     print(result)
