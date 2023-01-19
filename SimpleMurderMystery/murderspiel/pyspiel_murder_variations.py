@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from typing import List, NamedTuple
@@ -9,7 +8,7 @@ import numpy as np
 
 import enum
 
-N_PEOPLE = 4
+N_PEOPLE = 5
 ALLOW_PASS = True
 PASS_ACTION = N_PEOPLE
 
@@ -26,6 +25,7 @@ class MurderMysteryParams(NamedTuple):
     success_score: int = 100
     cost_per_accusation: int = 10
     cost_per_death: int = 10
+
 
 class Rewards:
     SUCCESS: int = 100
@@ -46,7 +46,7 @@ _GAME_TYPE = pyspiel.GameType(
     max_num_players=_NUM_PLAYERS,
     min_num_players=_NUM_PLAYERS,
     provides_information_state_string=True,
-    provides_information_state_tensor=False,
+    provides_information_state_tensor=True,
     provides_observation_string=True,
     provides_observation_tensor=False,
     provides_factored_observation_string=False)
@@ -68,7 +68,7 @@ class MurderMysteryPlayer(enum.IntEnum):
 class MurderMysteryVariationsGame(pyspiel.Game):
     """Very Simple Murder Mystery Game"""
 
-    def __init__(self, params=None, game_params:MurderMysteryParams = None) -> None:
+    def __init__(self, params=None, game_params: MurderMysteryParams = None) -> None:
         self.game_params = game_params
         super().__init__(_GAME_TYPE, _GAME_INFO, params or dict())
 
@@ -182,7 +182,6 @@ class MurderMysteryVariationsState(pyspiel.State):
                 self.killer in self.accused
         )
 
-
     def score(self) -> float:
         if not self.is_terminal():
             return 0
@@ -212,7 +211,6 @@ class MurderMysteryVariationsState(pyspiel.State):
 
 class MurderMysteryVariationsObserver:
     """Observer, conforming to the PyObserver interface (see observation.py)."""
-
 
     def __init__(self, iig, params):
         """Initializes an empty observation tensor."""
@@ -251,7 +249,7 @@ class MurderMysteryVariationsObserver:
         all_list = [*killer_list, *alive_list, *dead_list, *accused_list]
         for i, x in enumerate(all_list):
             obs[i] = x
-        print("All list: ",all_list)
+        print("All list: ", all_list)
         print("obs: ", obs)
 
     def string_from(self, state: MurderMysteryVariationsState, player: int):
@@ -264,4 +262,3 @@ class MurderMysteryVariationsObserver:
 # Register the game with the OpenSpiel library
 
 # pyspiel.register_game(_GAME_TYPE, SimonPokerGame)
-

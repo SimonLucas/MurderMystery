@@ -1,29 +1,11 @@
 from typing import List
-import numpy as np
-import numpy.typing as npt
-
-from open_spiel.python.algorithms import exploitability, cfr
 from pyspiel import TabularPolicy
 
-from murderspiel.cfr_util import get_cfr_policy
+from murderspiel.pyspiel_utilities import get_cfr_policy
 from murderspiel.pyspiel_murder_variations import MurderMysteryVariationsGame, MurderMysteryParams
-import itertools as it
 from open_spiel.python import policy as policy_lib
 
-
-# now play some games against each other
-def sample(actions_and_probs: list):
-    actions, probs = zip(*actions_and_probs)
-    return np.random.choice(actions, p=probs)
-
-
-def policy_as_list(policy: TabularPolicy, state: MurderMysteryVariationsGame):
-    # print(policy)
-    # print(state)
-
-    policy_list = list(enumerate(policy.policy_for_key(state.information_state_string())))
-    # print(f"{policy_list=}")
-    return policy_list
+from murderspiel.pyspiel_utilities import policy_as_list, sample
 
 
 # this should work for any openspiel game, but I've been lazy and put this type for now

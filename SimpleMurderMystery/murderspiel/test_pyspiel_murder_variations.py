@@ -3,13 +3,11 @@ from open_spiel.python.algorithms import exploitability, cfr
 from murderspiel.pyspiel_murder_variations import MurderMysteryVariationsGame, MurderMysteryParams
 import itertools as it
 
+from murderspiel.pyspiel_utilities import get_cfr_policy
+
 game = MurderMysteryVariationsGame()
 
 
-def print_policy(policy):
-    for state, probs in zip(it.chain(*policy.states_per_player),
-                            policy.action_probability_array):
-        print(f'{state:6}   p={probs}')
 
 
 # cfr_policy = get_cfr_policy(game, 10)
