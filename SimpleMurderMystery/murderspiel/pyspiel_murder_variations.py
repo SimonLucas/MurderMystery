@@ -8,15 +8,16 @@ import numpy as np
 
 import enum
 
-N_PEOPLE = 5
-ALLOW_PASS = True
-PASS_ACTION = N_PEOPLE
 
-ACTIONS = list(range(N_PEOPLE))
-if ALLOW_PASS:
-    ACTIONS.append(PASS_ACTION)
+# N_PEOPLE = 4
+# ALLOW_PASS = True
+# PASS_ACTION = N_PEOPLE
 
-MAX_SCORE = N_PEOPLE * 10
+# ACTIONS = list(range(N_PEOPLE))
+# if ALLOW_PASS:
+#     ACTIONS.append(PASS_ACTION)
+
+# MAX_SCORE = N_PEOPLE * 10
 
 
 class MurderMysteryParams(NamedTuple):
@@ -25,6 +26,8 @@ class MurderMysteryParams(NamedTuple):
     success_score: int = 100
     cost_per_accusation: int = 10
     cost_per_death: int = 10
+    n_people: int = 4
+    max_turns: int = 7
 
 
 class Rewards:
@@ -50,14 +53,16 @@ _GAME_TYPE = pyspiel.GameType(
     provides_observation_string=True,
     provides_observation_tensor=False,
     provides_factored_observation_string=False)
-_GAME_INFO = pyspiel.GameInfo(
-    num_distinct_actions=len(ACTIONS),
-    max_chance_outcomes=N_PEOPLE,
-    num_players=_NUM_PLAYERS,
-    min_utility=-MAX_SCORE,
-    max_utility=MAX_SCORE,
-    utility_sum=0.0,
-    max_game_length=2 * len(ACTIONS))  # e.g. Pass, Bet, Bet
+
+
+# _GAME_INFO = pyspiel.GameInfo(
+#     num_distinct_actions=len(ACTIONS),
+#     max_chance_outcomes=N_PEOPLE,
+#     num_players=_NUM_PLAYERS,
+#     min_utility=-MAX_SCORE,
+#     max_utility=MAX_SCORE,
+#     utility_sum=0.0,
+#     max_game_length=2 * len(ACTIONS))  # e.g. Pass, Bet, Bet
 
 
 class MurderMysteryPlayer(enum.IntEnum):
@@ -69,18 +74,32 @@ class MurderMysteryVariationsGame(pyspiel.Game):
     """Very Simple Murder Mystery Game"""
 
     def __init__(self, params=None, game_params: MurderMysteryParams = None) -> None:
+        game_params = game_params or MurderMysteryParams()
         self.game_params = game_params
-        super().__init__(_GAME_TYPE, _GAME_INFO, params or dict())
+        n_actions = game_params.n_people
+        if game_params.allow_pass:
+            n_actions += 1
+        max_score = game_params.n_people * 10
+        game_info = pyspiel.GameInfo(
+            num_distinct_actions=n_actions,
+            max_chance_outcomes=game_params.n_people,
+            num_players=2,
+            min_utility=-max_score,
+            max_utility=max_score,
+            utility_sum=0.0,
+            max_game_length=game_params.max_turns
+        )
+        super().__init__(_GAME_TYPE, game_info, params or dict())
 
     def new_initial_state(self, params: MurderMysteryParams = None) -> MurderMysteryVariationsState:
         """Returns a state corresponding to the start of a game."""
-        return MurderMysteryVariationsState(self, params or self.game_params or MurderMysteryParams())
+        return MurderMysteryVariationsState(self, self.game_params)
 
     def make_py_observer(self, iig_obs_type=None, params=None):
         """Returns an object used for observing game state."""
         return MurderMysteryVariationsObserver(
             iig_obs_type or pyspiel.IIGObservationType(perfect_recall=False),
-            params)
+            self.game_params)
 
 
 class MurderMysteryVariationsState(pyspiel.State):
@@ -90,12 +109,12 @@ class MurderMysteryVariationsState(pyspiel.State):
         """Constructor; should only be called by Game.new_initial_state."""
         super().__init__(game)
         self.params = params
-        self.alive = set(range(N_PEOPLE))
+        self.alive = set(range(params.n_people))
         self.dead = set()
         self.accused = set()
         self.killer = -1
         self._move_no = 0
-        self._max_turns = N_PEOPLE
+        self.pass_action = params.n_people
 
     # OpenSpiel (PySpiel) API functions are below. This is the standard set that
     # should be implemented by every sequential-move game with chance.
@@ -121,7 +140,9 @@ class MurderMysteryVariationsState(pyspiel.State):
         if self.current_player() == MurderMysteryPlayer.KILLER and not self.params.allow_suicide:
             action_set -= {self.killer}
         if self.params.allow_pass:
-            action_set.add(PASS_ACTION)
+            action_set.add(self.pass_action)
+        else:
+            assert self.pass_action not in action_set
         return list(action_set)
 
     def chance_outcomes(self):
@@ -143,7 +164,7 @@ class MurderMysteryVariationsState(pyspiel.State):
 
     def _apply_action(self, action: int) -> None:
         """Applies the specified action to the state."""
-        if action == PASS_ACTION:
+        if action == self.pass_action:
             assert self.params.allow_pass
             self._move_no += 1
             return
@@ -177,7 +198,7 @@ class MurderMysteryVariationsState(pyspiel.State):
     def is_terminal(self):
         """Returns True if the game is over i.e. max moves, or killer identified, or no one left alive except possibly the killer"""
         return (
-                self._move_no >= self._max_turns or
+                self._move_no >= self.params.max_turns or
                 len(self.alive - {self.killer}) == 0 or
                 self.killer in self.accused
         )
@@ -212,17 +233,18 @@ class MurderMysteryVariationsState(pyspiel.State):
 class MurderMysteryVariationsObserver:
     """Observer, conforming to the PyObserver interface (see observation.py)."""
 
-    def __init__(self, iig, params):
+    def __init__(self, iig, params: MurderMysteryParams):
         """Initializes an empty observation tensor."""
-        if params:
-            raise ValueError(f"Observation parameters not supported; passed {params}")
+        if params == None:
+            raise ValueError(f"Observation needs params for setup; passed {params}")
         # The observation should contain a 1-D tensor in `self.tensor` and a
         # dictionary of views onto the tensor, which may be of any shape.
         # Here the observation will depend on the player
         # The tensor comprises the following pieces given N players
         # Each set describes the killer identity (N), the alive people (N), the dead people(N), the accused (N)
         # The one-hot coding for killer has N elements, all will be zero if the killer is not assigned yet
-        size = 4 * N_PEOPLE
+        self.params = params
+        size = 4 * params.n_people
         shape = (size)
         self.tensor = np.zeros(size, np.float32)
         self.dict = {"observation": np.reshape(self.tensor, shape)}
@@ -240,17 +262,17 @@ class MurderMysteryVariationsObserver:
         obs = self.dict["observation"]
         obs.fill(0)
         if player == MurderMysteryPlayer.DETECTIVE:
-            killer_list = self._code_killer(-1, N_PEOPLE)
+            killer_list = self._code_killer(-1, self.params.n_people)
         else:
-            killer_list = self._code_killer(state.killer, N_PEOPLE)
-        alive_list = self._code_set(state.alive, N_PEOPLE)
-        dead_list = self._code_set(state.alive, N_PEOPLE)
-        accused_list = self._code_set(state.alive, N_PEOPLE)
+            killer_list = self._code_killer(state.killer, self.params.n_people)
+        alive_list = self._code_set(state.alive, self.params.n_people)
+        dead_list = self._code_set(state.alive, self.params.n_people)
+        accused_list = self._code_set(state.alive, self.params.n_people)
         all_list = [*killer_list, *alive_list, *dead_list, *accused_list]
         for i, x in enumerate(all_list):
             obs[i] = x
-        print("All list: ", all_list)
-        print("obs: ", obs)
+        # print("All list: ", all_list)
+        # print("obs: ", obs)
 
     def string_from(self, state: MurderMysteryVariationsState, player: int):
         """Observation of `state` from the PoV of `player`, as a string."""

@@ -10,6 +10,9 @@ from typing import NamedTuple, Set, Tuple, List
 
 
 # We use a class here to group the reward constants to keep things neat
+from core.game_interfaces import ObservationForDetective
+
+
 class Rewards:
     SUCCESS: int = 100
     COST_PER_ACCUSATION: int = 10
