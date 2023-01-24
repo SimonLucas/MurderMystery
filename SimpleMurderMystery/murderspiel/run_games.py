@@ -40,7 +40,7 @@ def run_game(game: MurderMysteryVariationsGame, players: List[TabularPolicy]) ->
 
 
 def run_games(n_games: int = 1, cfr_iterations=10) -> None:
-    params = MurderMysteryParams(allow_pass=True, allow_suicide=True)
+    params = MurderMysteryParams(allow_pass=False, allow_suicide=False)
     game = MurderMysteryVariationsGame(game_params=params)
     # create a uniform random policy
     game_logger.info(game.game_params)
@@ -60,4 +60,4 @@ if __name__ == '__main__':
     # (un)comment following to turn (on/off) logging
     # game_logger.setLevel(logging.INFO)
     game_logger.info("Test message")
-    run_games(10)
+    run_games(1000)

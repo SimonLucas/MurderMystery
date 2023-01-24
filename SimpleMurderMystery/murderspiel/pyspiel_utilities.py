@@ -53,6 +53,7 @@ def advantage_as_first_player(state: State, player: TabularPolicy, opponent: Tab
         ap = policy_as_list(opponent, state)
     else:
         raise Exception("Should not be here")
+
     return sum(p * advantage_as_first_player(state.child(a), player, opponent, player_role) for a, p in ap)
 
 

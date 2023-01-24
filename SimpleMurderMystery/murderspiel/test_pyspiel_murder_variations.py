@@ -8,8 +8,6 @@ from murderspiel.pyspiel_utilities import get_cfr_policy
 game = MurderMysteryVariationsGame()
 
 
-
-
 # cfr_policy = get_cfr_policy(game, 10)
 #
 # print_policy(cfr_policy)

@@ -8,14 +8,14 @@ from open_spiel.python import policy as policy_lib
 from murderspiel.pyspiel_utilities import policy_as_list, sample
 
 if __name__ == '__main__':
-    params = MurderMysteryParams(allow_pass=True, allow_suicide=True)
+    params = MurderMysteryParams(allow_pass=False, allow_suicide=False)
     game = MurderMysteryVariationsGame(game_params=params)
     # game = MurderMysteryVariationsGame()
     # create a uniform random policy
     print(game.game_params)
     uniform_random_policy = policy_lib.TabularPolicy(game)
-    cfr_policy = get_cfr_policy(game, 2)
-    # cfr_policy = uniform_random_policy
+    # cfr_policy = get_cfr_policy(game, 2)
+    cfr_policy = uniform_random_policy
     result = total_advantage(game, cfr_policy, uniform_random_policy)
     print_policy(cfr_policy)
     print(f"Advantage = {result}")

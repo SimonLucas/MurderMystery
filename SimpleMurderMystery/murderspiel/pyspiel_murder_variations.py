@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import List, NamedTuple
 
 import pyspiel
@@ -33,7 +34,7 @@ class MurderMysteryParams(NamedTuple):
 class Rewards:
     SUCCESS: int = 100
     COST_PER_ACCUSATION: int = 10
-    COST_PER_DEATH = 10
+    COST_PER_DEATH: int = 10
 
 
 _NUM_PLAYERS = 2
@@ -138,11 +139,13 @@ class MurderMysteryVariationsState(pyspiel.State):
         assert player >= 0
         action_set = set(self.alive)
         if self.current_player() == MurderMysteryPlayer.KILLER and not self.params.allow_suicide:
+            print(f"Removing killer {self.killer} from actions {action_set}")
             action_set -= {self.killer}
         if self.params.allow_pass:
             action_set.add(self.pass_action)
         else:
             assert self.pass_action not in action_set
+        print(f"Returning action set: {action_set}")
         return list(action_set)
 
     def chance_outcomes(self):
@@ -156,10 +159,17 @@ class MurderMysteryVariationsState(pyspiel.State):
         return [(o, p) for o in outcomes]
 
     def _kill_action(self, victim: int) -> None:
+        print(f" {self.killer} to kill {victim}, {self.alive}")
+        assert self.params.allow_suicide == False
+        assert self.params.allow_pass == False
+        assert self.current_player() == MurderMysteryPlayer.KILLER
+        if not self.params.allow_suicide:
+            assert not victim == self.killer, f"{victim}, {self.killer}, {self.alive}, {self._move_no}, {self.current_player()}, {self._legal_actions(self.current_player())}"
         self.alive.discard(victim)
         self.dead.add(victim)
 
     def _accuse_action(self, suspect: int) -> None:
+        assert self.current_player() == MurderMysteryPlayer.DETECTIVE
         self.accused.add(suspect)
 
     def _apply_action(self, action: int) -> None:
@@ -194,6 +204,13 @@ class MurderMysteryVariationsState(pyspiel.State):
             return len(self.alive)
         else:
             return len(self._legal_actions(self.current_player()))
+
+    # def check_sanity(self) -> None:
+    #     assert
+
+    def clone(self):
+        cp = super().clone()
+        return cp
 
     def is_terminal(self):
         """Returns True if the game is over i.e. max moves, or killer identified, or no one left alive except possibly the killer"""
