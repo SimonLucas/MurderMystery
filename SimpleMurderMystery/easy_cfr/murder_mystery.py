@@ -101,6 +101,12 @@ class MurderGameModel(GameState):
     def n_actions(self) -> int:
         return len(self.actions())
 
+    def max_actions(self) -> int:
+        n_max = self.params.n_people
+        if self.params.allow_pass:
+            n_max += 1
+        return n_max
+
     def kill_action(self, victim: int) -> None:
         game_logger.info(f" {self.state.killer} to kill {victim}, {self.state.alive}")
         assert self.current_player() == MurderMysteryPlayer.KILLER

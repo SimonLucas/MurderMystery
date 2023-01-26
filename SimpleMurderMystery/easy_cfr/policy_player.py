@@ -21,18 +21,6 @@ np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
 # cfr_logger.addHandler(c_handler)
 
 
-class InfSetPolicy:
-    def __init__(self, n_actions: int = 2) -> None:
-        self.probs: List[float] = [1 / n_actions for _ in range(n_actions)]
-
-    def p(self) -> List[float]:
-        return self.probs
-
-#
-# class Policy:
-#     def __init__(self) -> None:
-#         pass
-#
 
 
 

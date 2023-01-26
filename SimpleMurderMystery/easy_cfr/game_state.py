@@ -35,6 +35,9 @@ class GameState(ABC):
     def n_actions(self) -> int:
         pass
 
+    def max_actions(self) -> int:
+        pass
+
     def actions(self) -> List[int]:
         pass
 
