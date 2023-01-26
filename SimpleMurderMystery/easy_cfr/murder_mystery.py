@@ -11,6 +11,7 @@ from easy_cfr.game_state import GameState, Player
 N_STATE_TRANSITIONS: int = 0
 
 import logging
+
 game_logger = logging.getLogger(__name__)
 
 c_handler = logging.StreamHandler()
@@ -49,7 +50,7 @@ class MurderGameModel(GameState):
         self.params = params or MurderMysteryParams()
         people = list(range(self.params.n_people))
         killer = -1
-        self.state = MurderGameState(alive=set(people), dead=set(), accused=set(), killer=killer, moves = [])
+        self.state = MurderGameState(alive=set(people), dead=set(), accused=set(), killer=killer, moves=[])
         self.pass_action = -1
 
     def move_no(self) -> int:
@@ -108,6 +109,9 @@ class MurderGameModel(GameState):
         return n_max
 
     def kill_action(self, victim: int) -> None:
+        if self.state.killer not in self.state.alive:
+            # the killer can't make a kill if they are already dead
+            return
         game_logger.info(f" {self.state.killer} to kill {victim}, {self.state.alive}")
         assert self.current_player() == MurderMysteryPlayer.KILLER
         if not self.params.allow_suicide:
@@ -177,14 +181,18 @@ class MurderGameModel(GameState):
                 s += str(self.state.moves[1:])
             return s
 
+    def current_player_string(self):
+        lut = {-1: "C", 0: "K", 1: "D"}
+        return lut[self.current_player()]
+
     def action_to_string(self, action):
         """Action -> string."""
         if self.current_player() == Player.CHANCE:
-            return f"RandKiller: {action}"
+            return f"C: {action}"
         elif action == self.pass_action:
-            return f"p{self.current_player()} passes"
+            return f"{self.current_player_string()}:P"
         else:
-            return f"p{self.current_player()} -> {action}"
+            return f"{self.current_player_string()}:{action}"
 
     def __str__(self):
         if self.is_terminal():
@@ -208,5 +216,3 @@ if __name__ == '__main__':
     print(game.information_set())
     game.act(1)
     print(game.information_set())
-
-

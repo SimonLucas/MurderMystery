@@ -42,7 +42,6 @@ if __name__ == '__main__':
     params = MurderMysteryParams(allow_pass=False, allow_suicide=True, n_people=4, max_turns=8)
     state_factory = partial(MurderGameModel, params)
 
-
     policy_player = get_policy_player(state_factory, n_iterations=100)
 
     # calling with zero iterations results in a uniform random policy

@@ -66,11 +66,40 @@ class InfoSetTabularPolicy:
             # print(f"updated: {self.p_action_dict[key]=}")
 
 
+class TabularPolicyPlayer(PlayerInterface):
+    def __init__(self, policy: InfoSetTabularPolicy):
+        self.policy = policy
+
+    # def make_greedy(self) -> PolicyPlayer:
+    #     self.policy = greedify(self.policy)
+    #     return self
+
+    def get_action(self, state: GameState) -> int:
+        return self.get_inf_set_action(state)
+
+    def get_inf_set_action(self, state: GameState) -> int:
+        inf_set = state.information_set()
+        action_probs = self.get_action_probs(state)
+        actions, probs = list(zip(*action_probs))
+        choice = random.choices(actions, probs)[0]
+        history = str(state)
+        # confirms this is behaving as expected
+        # print(f"{inf_set=}, {index=}, {choice=}, {probs=}, {history=}")
+        return choice
+
+    def get_action_probs(self, state: GameState) -> List[Tuple[int, float]]:
+        inf_set = state.information_set()
+        probs = self.policy.policy_dict[inf_set]
+        ap = [(a, p) for a, p in zip(state.actions(), probs)]
+        return ap
+
+
+
 class FullCFR:
     def __init__(self, game: GameState, policy: InfoSetTabularPolicy):
         self.game = game
         self.policy = policy
-        # hard wire this for now
+        # hardwire this for now
         self.n_players = 2
 
     def new_reach(self, so_far: npt.NDArray, player: int, action_prob: float) -> npt.NDArray:
@@ -125,7 +154,7 @@ class FullCFR:
             return value
 
 
-def run_cfr(state_factory, n_iterations: int = 100) -> InfoSetTabularPolicy:
+def run_easy_cfr(state_factory, n_iterations: int = 100) -> InfoSetTabularPolicy:
     policy = InfoSetTabularPolicy()
     initial_state = state_factory()
     full_cfr = FullCFR(initial_state, policy)
@@ -152,7 +181,7 @@ def info_set_actions_test():
 def info_set_cfr_test():
     params = MurderMysteryParams(allow_pass=True, allow_suicide=False, n_people=3, max_turns=6)
     model_factory = partial(MurderGameModel, params)
-    policy = run_cfr(model_factory, 3)
+    policy = run_easy_cfr(model_factory, 3)
     print(f"{policy.policy_dict=}")
     print(f"{policy.regret_dict=}")
     print(f"{policy.p_action_dict=}")
