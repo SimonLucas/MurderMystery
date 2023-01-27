@@ -39,15 +39,15 @@ def print_eval(state_factory, player: PolicyPlayer, opponent: PolicyPlayer) -> N
 if __name__ == '__main__':
     # state_factory = KuhnPoker
 
-    params = MurderMysteryParams(allow_pass=False, allow_suicide=True, n_people=4, max_turns=8)
+    params = MurderMysteryParams(allow_pass=True, allow_suicide=True, n_people=3, max_turns=8)
     state_factory = partial(MurderGameModel, params)
 
-    policy_player = get_policy_player(state_factory, n_iterations=100)
+    policy_player = get_policy_player(state_factory, n_iterations=10)
 
     # calling with zero iterations results in a uniform random policy
     random_player = get_policy_player(state_factory, n_iterations=0)
 
-    # print(f"{policy_player=}")
+    print(f"{policy_player=}")
     print()
     print("Random player", random_player.policy)
     print(f"{state_factory=}")

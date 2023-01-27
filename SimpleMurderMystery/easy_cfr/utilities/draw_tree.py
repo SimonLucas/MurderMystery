@@ -18,7 +18,7 @@ def enumerate_states(state: GameState, states: Optional[List[GameState]] = None)
 def build_graph(state: GameState, parent: Optional[GraphNode] = None) -> GraphNode:
     parent.label = state.information_set()  # str(state)
     # parent.label = str(state)
-    print(f"{parent.label=}, {state.information_set()=}")
+    # print(f"{parent.label=}, {state.information_set()=}")
     if not state.is_terminal():
         for action in state.actions():
             action_string = state.action_to_string(action)

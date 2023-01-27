@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import numpy.typing as npt
 
+from easy_cfr.evaluate_policies import print_eval
 from easy_cfr.game_state import GameState, Player, PlayerInterface
 from easy_cfr.murder_mystery import MurderMysteryParams, MurderGameModel
 from easy_cfr.policy_player import MyPolicy
@@ -40,7 +41,7 @@ class InfoSetTabularPolicy:
             pa /= n_actions
             self.p_action_dict[key] = pa
             self.regret_dict[key] = np.zeros(n_actions)
-            self.policy_dict[key] = np.zeros(n_actions)
+            self.policy_dict[key] = np.ones(n_actions) / n_actions
             return pa
 
     def regrets(self, key: str) -> npt.NDArray:
@@ -51,6 +52,11 @@ class InfoSetTabularPolicy:
     def normalise(p: npt.NDArray) -> npt.NDArray:
         sum_p = np.sum(p)
         return p / sum_p
+
+    def force_random(self):
+        for key, value in self.policy_dict.items():
+            n = len(value)
+            self.policy_dict[key] = np.ones(n) / n
 
     def update(self, step: int) -> None:
         for key, regrets in self.regret_dict.items():
@@ -82,9 +88,6 @@ class TabularPolicyPlayer(PlayerInterface):
         action_probs = self.get_action_probs(state)
         actions, probs = list(zip(*action_probs))
         choice = random.choices(actions, probs)[0]
-        history = str(state)
-        # confirms this is behaving as expected
-        # print(f"{inf_set=}, {index=}, {choice=}, {probs=}, {history=}")
         return choice
 
     def get_action_probs(self, state: GameState) -> List[Tuple[int, float]]:
@@ -180,10 +183,16 @@ def info_set_actions_test():
 def info_set_cfr_test():
     params = MurderMysteryParams(allow_pass=True, allow_suicide=False, n_people=3, max_turns=6)
     model_factory = partial(MurderGameModel, params)
-    policy = run_easy_cfr(model_factory, 3)
+    policy = run_easy_cfr(model_factory, 100)
     print(f"{policy.policy_dict=}")
     print(f"{policy.regret_dict=}")
     print(f"{policy.p_action_dict=}")
+    policy_player = TabularPolicyPlayer(policy)
+    random_policy = run_easy_cfr(model_factory, 1)
+    random_policy.force_random()
+    print(random_policy.policy_dict)
+    random_player = TabularPolicyPlayer(random_policy)
+    print_eval(model_factory, policy_player, random_player)
 
 
 if __name__ == '__main__':

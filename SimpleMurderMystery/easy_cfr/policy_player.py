@@ -11,6 +11,7 @@ from easy_cfr.game_state import GameState, Player, PlayerInterface
 
 np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
 
+
 # cfr_logger = logging.getLogger(__name__)
 #
 # c_handler = logging.StreamHandler()
@@ -19,9 +20,6 @@ np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
 # # c_handler.setFormatter(c_format)
 #
 # cfr_logger.addHandler(c_handler)
-
-
-
 
 
 class MyPolicy:
@@ -89,4 +87,3 @@ class PolicyPlayer(PlayerInterface):
         probs = self.policy[index]
         ap = [(a, p) for a, p in zip(state.actions(), probs)]
         return ap
-

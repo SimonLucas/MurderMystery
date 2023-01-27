@@ -8,3 +8,4 @@ if __name__ == '__main__':
     model_factory = partial(MurderGameModel, params)
     draw_game_tree(model_factory)
 
+
