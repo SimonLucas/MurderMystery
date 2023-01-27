@@ -94,7 +94,6 @@ class TabularPolicyPlayer(PlayerInterface):
         return ap
 
 
-
 class FullCFR:
     def __init__(self, game: GameState, policy: InfoSetTabularPolicy):
         self.game = game
