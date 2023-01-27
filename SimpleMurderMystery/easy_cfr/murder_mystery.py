@@ -170,7 +170,7 @@ class MurderGameModel(GameState):
 
     def information_set(self) -> str:
         if self.is_terminal():
-            return "."
+            return f"{self.returns()[0]}"
         elif self.current_player() == Player.CHANCE:
             return "?"
         else:
@@ -178,7 +178,9 @@ class MurderGameModel(GameState):
             # miss the first one, as that's a chance node that must be excluded from the information set
             s = "?"
             if len(self.state.moves) > 0:
-                s += str(self.state.moves[1:])
+                s = str(self.state.moves[1:])
+            if self.current_player() == MurderMysteryPlayer.KILLER:
+                s+=f"k={self.state.killer}"
             return s
 
     def current_player_string(self):
