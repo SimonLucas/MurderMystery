@@ -17,6 +17,8 @@ def enumerate_states(state: GameModel, states: Optional[List[GameModel]] = None)
 
 def build_graph(state: GameModel, parent: Optional[GraphNode] = None) -> GraphNode:
     parent.label = state.information_set()  # str(state)
+    if state.is_terminal():
+        parent.label = str(state.returns()[0])
     # parent.label = str(state)
     # print(f"{parent.label=}, {state.information_set()=}")
     if not state.is_terminal():

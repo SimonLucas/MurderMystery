@@ -10,6 +10,7 @@ import numpy.typing as npt
 
 from easy_cfr.evaluate_policies import print_eval
 from easy_cfr.game_and_agent_interfaces import GameModel, Player, PlayerInterface
+from easy_cfr.kuhn_poker import KuhnPoker
 from easy_cfr.murder_mystery import MurderMysteryParams, MurderGameModel
 from easy_cfr.policy_player import MyPolicy
 
@@ -183,7 +184,11 @@ def info_set_actions_test():
 def info_set_cfr_test():
     params = MurderMysteryParams(allow_pass=True, allow_suicide=False, n_people=3, max_turns=6)
     model_factory = partial(MurderGameModel, params)
-    policy = run_easy_cfr(model_factory, 100)
+
+    model_factory = KuhnPoker
+
+
+    policy = run_easy_cfr(model_factory, 513)
     print(f"{policy.policy_dict=}")
     print(f"{policy.regret_dict=}")
     print(f"{policy.p_action_dict=}")
@@ -193,6 +198,9 @@ def info_set_cfr_test():
     print(random_policy.policy_dict)
     random_player = TabularPolicyPlayer(random_policy)
     print_eval(model_factory, policy_player, random_player)
+
+    for inf_set, ap in policy.policy_dict.items():
+        print(f"{inf_set=}, {ap=}")
 
 
 if __name__ == '__main__':

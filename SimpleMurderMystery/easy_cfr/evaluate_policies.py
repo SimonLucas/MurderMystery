@@ -1,6 +1,7 @@
 from functools import partial
 
 from easy_cfr.game_and_agent_interfaces import GameModel, Player
+from easy_cfr.kuhn_poker import KuhnPoker
 from easy_cfr.murder_mystery import MurderGameModel, MurderMysteryParams
 
 from easy_cfr.policy_utils import PolicyPlayer, get_policy_player
@@ -40,9 +41,11 @@ if __name__ == '__main__':
     # state_factory = KuhnPoker
 
     params = MurderMysteryParams(allow_pass=True, allow_suicide=True, n_people=3, max_turns=8)
-    state_factory = partial(MurderGameModel, params)
+    # state_factory = partial(MurderGameModel, params)
 
-    policy_player = get_policy_player(state_factory, n_iterations=10)
+    state_factory = KuhnPoker
+
+    policy_player = get_policy_player(state_factory, n_iterations=100)
 
     # calling with zero iterations results in a uniform random policy
     random_player = get_policy_player(state_factory, n_iterations=0)

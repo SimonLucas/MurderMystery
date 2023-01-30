@@ -26,21 +26,27 @@ class PlayerInterface(ABC):
 
 class GameModel(ABC):
 
+    @abstractmethod
     def is_terminal(self) -> bool:
         pass
 
+    @abstractmethod
     def current_player(self) -> int:
         pass
 
+    @abstractmethod
     def n_actions(self) -> int:
         pass
 
+    @abstractmethod
     def max_actions(self) -> int:
         pass
 
+    @abstractmethod
     def actions(self) -> List[int]:
         pass
 
+    @abstractmethod
     def act(self, action: int) -> None:
         pass
 
@@ -73,15 +79,19 @@ class GameModel(ABC):
         else:
             return [self.child(action) for action in self.actions()]
 
+    @abstractmethod
     def returns(self) -> List[float]:
         pass
 
+    @abstractmethod
     def copy_state(self) -> GameModel:
         pass
 
+    @abstractmethod
     def action_to_string(self, action) -> str:
         pass
 
+    @abstractmethod
     def information_set(self) -> str:
         pass
 
