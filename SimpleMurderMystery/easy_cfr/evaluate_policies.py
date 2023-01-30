@@ -1,6 +1,6 @@
 from functools import partial
 
-from easy_cfr.game_state import GameModel, Player
+from easy_cfr.game_and_agent_interfaces import GameModel, Player
 from easy_cfr.murder_mystery import MurderGameModel, MurderMysteryParams
 
 from easy_cfr.policy_utils import PolicyPlayer, get_policy_player
