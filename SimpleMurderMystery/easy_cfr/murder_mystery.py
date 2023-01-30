@@ -6,7 +6,7 @@ from functools import partial
 import random
 import copy
 
-from easy_cfr.game_state import GameModel, Player
+from easy_cfr.game_and_agent_interfaces import GameModel, Player
 
 N_STATE_TRANSITIONS: int = 0
 

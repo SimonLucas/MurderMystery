@@ -9,7 +9,7 @@ import numpy as np
 import numpy.typing as npt
 
 from easy_cfr.evaluate_policies import print_eval
-from easy_cfr.game_state import GameModel, Player, PlayerInterface
+from easy_cfr.game_and_agent_interfaces import GameModel, Player, PlayerInterface
 from easy_cfr.murder_mystery import MurderMysteryParams, MurderGameModel
 from easy_cfr.policy_player import MyPolicy
 

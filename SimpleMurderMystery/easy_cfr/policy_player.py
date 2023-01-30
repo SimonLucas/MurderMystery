@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import numpy.typing as npt
 
-from easy_cfr.game_state import GameModel, Player, PlayerInterface
+from easy_cfr.game_and_agent_interfaces import GameModel, Player, PlayerInterface
 
 np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
 

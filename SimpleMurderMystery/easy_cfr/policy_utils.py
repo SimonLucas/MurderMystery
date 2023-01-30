@@ -3,7 +3,7 @@ from typing import Dict
 import numpy as np
 
 from easy_cfr.cfr import FullCFR
-from easy_cfr.game_state import GameModel
+from easy_cfr.game_and_agent_interfaces import GameModel
 from easy_cfr.policy_player import MyPolicy, PolicyPlayer
 
 policy_logger = logging.getLogger(__name__)

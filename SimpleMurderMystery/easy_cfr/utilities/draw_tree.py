@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from easy_cfr.game_state import GameModel
+from easy_cfr.game_and_agent_interfaces import GameModel
 from easy_cfr.utilities.graph_view_pygame import GraphNode, GraphView, Params
 
 

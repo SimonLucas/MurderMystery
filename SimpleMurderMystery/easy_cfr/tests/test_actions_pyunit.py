@@ -3,7 +3,7 @@ import logging
 import unittest
 from functools import partial
 
-from easy_cfr.game_state import Player
+from easy_cfr.game_and_agent_interfaces import Player
 from easy_cfr.murder_mystery import MurderGameModel, MurderMysteryParams, MurderMysteryPlayer
 from easy_cfr.policy_utils import get_policy_player, get_info_sets
 from easy_cfr.simpler_cfr import InfoSetTabularPolicy, run_easy_cfr, TabularPolicyPlayer
