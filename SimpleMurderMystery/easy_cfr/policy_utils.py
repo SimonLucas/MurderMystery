@@ -3,7 +3,7 @@ from typing import Dict
 import numpy as np
 
 from easy_cfr.cfr import FullCFR
-from easy_cfr.game_state import GameState
+from easy_cfr.game_state import GameModel
 from easy_cfr.policy_player import MyPolicy, PolicyPlayer
 
 policy_logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ c_handler.setLevel(logging.DEBUG)
 
 policy_logger.addHandler(c_handler)
 
-def get_info_sets(state: GameState, info_set_index: Dict[str, int]) -> Dict[str, int]:
+def get_info_sets(state: GameModel, info_set_index: Dict[str, int]) -> Dict[str, int]:
     ix = len(info_set_index.items())
     key = state.information_set()
     policy_logger.info(f"{key=}")
@@ -25,7 +25,7 @@ def get_info_sets(state: GameState, info_set_index: Dict[str, int]) -> Dict[str,
     return info_set_index
 
 
-def get_info_sets_per_player(state: GameState, info_set_index: Dict[str, int], player_id: int) -> Dict[str, int]:
+def get_info_sets_per_player(state: GameModel, info_set_index: Dict[str, int], player_id: int) -> Dict[str, int]:
     ix = len(info_set_index.items())
     key = state.information_set()
     if not key in info_set_index.keys() and not (key == '') and state.current_player() == player_id:
@@ -36,7 +36,7 @@ def get_info_sets_per_player(state: GameState, info_set_index: Dict[str, int], p
     return info_set_index
 
 class PolicyHelper:
-    def get_policy(self, state: GameState, n_players: int = 2) -> MyPolicy:
+    def get_policy(self, state: GameModel, n_players: int = 2) -> MyPolicy:
         info_sets = get_info_sets(state, {})
         my_policy = MyPolicy(info_sets, n_players, n_actions=5)
         # my_policy.print()

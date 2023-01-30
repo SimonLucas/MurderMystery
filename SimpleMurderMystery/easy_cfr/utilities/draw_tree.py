@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from easy_cfr.game_state import GameState
+from easy_cfr.game_state import GameModel
 from easy_cfr.utilities.graph_view_pygame import GraphNode, GraphView, Params
 
 
-def enumerate_states(state: GameState, states: Optional[List[GameState]] = None) -> List[GameState]:
+def enumerate_states(state: GameModel, states: Optional[List[GameModel]] = None) -> List[GameModel]:
     states = states or []
     states.append(state)
     if not state.is_terminal():
@@ -15,7 +15,7 @@ def enumerate_states(state: GameState, states: Optional[List[GameState]] = None)
     return states
 
 
-def build_graph(state: GameState, parent: Optional[GraphNode] = None) -> GraphNode:
+def build_graph(state: GameModel, parent: Optional[GraphNode] = None) -> GraphNode:
     parent.label = state.information_set()  # str(state)
     # parent.label = str(state)
     # print(f"{parent.label=}, {state.information_set()=}")

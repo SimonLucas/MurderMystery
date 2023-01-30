@@ -6,7 +6,7 @@ from functools import partial
 import random
 import copy
 
-from easy_cfr.game_state import GameState, Player
+from easy_cfr.game_state import GameModel, Player
 
 N_STATE_TRANSITIONS: int = 0
 
@@ -45,7 +45,7 @@ class MurderGameState:
     moves: List[int]
 
 
-class MurderGameModel(GameState):
+class MurderGameModel(GameModel):
     def __init__(self, params: MurderMysteryParams = None):
         self.params = params or MurderMysteryParams()
         people = list(range(self.params.n_people))
@@ -165,7 +165,7 @@ class MurderGameModel(GameState):
         score = self.score()
         return [score, -score]
 
-    def copy_state(self) -> GameState:
+    def copy_state(self) -> GameModel:
         return copy.deepcopy(self)
 
     def information_set(self) -> str:

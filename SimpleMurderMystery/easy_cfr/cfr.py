@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import numpy.typing as npt
 
-from easy_cfr.game_state import GameState, Player, PlayerInterface
+from easy_cfr.game_state import GameModel, Player, PlayerInterface
 from easy_cfr.policy_player import MyPolicy
 
 np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
@@ -36,7 +36,7 @@ class Policy:
 
 
 class FullCFR:
-    def __init__(self, game: GameState, policy: MyPolicy):
+    def __init__(self, game: GameModel, policy: MyPolicy):
         self.game = game
         self.policy = policy
         self.n_actions = policy.n_actions
@@ -49,7 +49,7 @@ class FullCFR:
         new[player] *= action_prob
         return new
 
-    def calc_cfr(self, state: GameState, reach: npt.NDArray) -> npt.NDArray:
+    def calc_cfr(self, state: GameModel, reach: npt.NDArray) -> npt.NDArray:
         """Updates regrets; returns utility for all players."""
         if state.is_terminal():
             return state.returns()

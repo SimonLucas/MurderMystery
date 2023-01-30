@@ -9,7 +9,7 @@ import numpy as np
 import numpy.typing as npt
 
 from easy_cfr.evaluate_policies import print_eval
-from easy_cfr.game_state import GameState, Player, PlayerInterface
+from easy_cfr.game_state import GameModel, Player, PlayerInterface
 from easy_cfr.murder_mystery import MurderMysteryParams, MurderGameModel
 from easy_cfr.policy_player import MyPolicy
 
@@ -80,17 +80,17 @@ class TabularPolicyPlayer(PlayerInterface):
     #     self.policy = greedify(self.policy)
     #     return self
 
-    def get_action(self, state: GameState) -> int:
+    def get_action(self, state: GameModel) -> int:
         return self.get_inf_set_action(state)
 
-    def get_inf_set_action(self, state: GameState) -> int:
+    def get_inf_set_action(self, state: GameModel) -> int:
         inf_set = state.information_set()
         action_probs = self.get_action_probs(state)
         actions, probs = list(zip(*action_probs))
         choice = random.choices(actions, probs)[0]
         return choice
 
-    def get_action_probs(self, state: GameState) -> List[Tuple[int, float]]:
+    def get_action_probs(self, state: GameModel) -> List[Tuple[int, float]]:
         inf_set = state.information_set()
         probs = self.policy.policy_dict[inf_set]
         ap = [(a, p) for a, p in zip(state.actions(), probs)]
@@ -98,7 +98,7 @@ class TabularPolicyPlayer(PlayerInterface):
 
 
 class FullCFR:
-    def __init__(self, game: GameState, policy: InfoSetTabularPolicy):
+    def __init__(self, game: GameModel, policy: InfoSetTabularPolicy):
         self.game = game
         self.policy = policy
         # hardwire this for now
@@ -110,7 +110,7 @@ class FullCFR:
         new[player] *= action_prob
         return new
 
-    def calc_cfr(self, state: GameState, reach: npt.NDArray) -> npt.NDArray:
+    def calc_cfr(self, state: GameModel, reach: npt.NDArray) -> npt.NDArray:
         """Updates regrets; returns utility for all players."""
         if state.is_terminal():
             return state.returns()

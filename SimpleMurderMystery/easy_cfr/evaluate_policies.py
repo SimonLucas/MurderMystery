@@ -1,12 +1,12 @@
 from functools import partial
 
-from easy_cfr.game_state import GameState, Player
+from easy_cfr.game_state import GameModel, Player
 from easy_cfr.murder_mystery import MurderGameModel, MurderMysteryParams
 
 from easy_cfr.policy_utils import PolicyPlayer, get_policy_player
 
 
-def evaluate(state: GameState, player: PolicyPlayer, opponent: PolicyPlayer, player_role: int):
+def evaluate(state: GameModel, player: PolicyPlayer, opponent: PolicyPlayer, player_role: int):
     if state.is_terminal():
         return state.returns()[player_role]
     elif state.current_player() == player_role:

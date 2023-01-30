@@ -16,15 +16,15 @@ class Player(IntEnum):
 
 class PlayerInterface(ABC):
     @abstractmethod
-    def get_action(self, state: GameState) -> int:
+    def get_action(self, state: GameModel) -> int:
         pass
 
     @abstractmethod
-    def get_inf_set_action(self, state: GameState) -> int:
+    def get_inf_set_action(self, state: GameModel) -> int:
         pass
 
 
-class GameState(ABC):
+class GameModel(ABC):
 
     def is_terminal(self) -> bool:
         pass
@@ -44,12 +44,12 @@ class GameState(ABC):
     def act(self, action: int) -> None:
         pass
 
-    def child(self, action: int) -> GameState:
+    def child(self, action: int) -> GameModel:
         cp = self.copy_state()
         cp.act(action)
         return cp
 
-    def chance_outcomes(self) -> List[Tuple[GameState, float]]:
+    def chance_outcomes(self) -> List[Tuple[GameModel, float]]:
         assert self.current_player() == Player.CHANCE
         p = 1 / len(self.actions())
         return [(self.child(action), p) for action in self.actions()]
@@ -59,7 +59,7 @@ class GameState(ABC):
         p = 1 / len(self.actions())
         return [(action, p) for action in self.actions()]
 
-    def take_uniform_random_action(self) -> GameState:
+    def take_uniform_random_action(self) -> GameModel:
         assert self.current_player() == Player.CHANCE
         action = random.choice(self.actions())
         return self.child(action)
@@ -67,7 +67,7 @@ class GameState(ABC):
     def get_uniform_random_action(self) -> int:
         return random.choice(self.actions())
 
-    def children(self) -> List[GameState]:
+    def children(self) -> List[GameModel]:
         if self.is_terminal():
             return []
         else:
@@ -76,7 +76,7 @@ class GameState(ABC):
     def returns(self) -> List[float]:
         pass
 
-    def copy_state(self) -> GameState:
+    def copy_state(self) -> GameModel:
         pass
 
     def action_to_string(self, action) -> str:

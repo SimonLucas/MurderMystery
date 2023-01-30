@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import numpy.typing as npt
 
-from easy_cfr.game_state import GameState, Player, PlayerInterface
+from easy_cfr.game_state import GameModel, Player, PlayerInterface
 
 np.set_printoptions(precision=3, suppress=True, floatmode='fixed')
 
@@ -68,10 +68,10 @@ class PolicyPlayer(PlayerInterface):
         self.policy = greedify(self.policy)
         return self
 
-    def get_action(self, state: GameState) -> int:
+    def get_action(self, state: GameModel) -> int:
         return self.get_inf_set_action(state)
 
-    def get_inf_set_action(self, state: GameState) -> int:
+    def get_inf_set_action(self, state: GameModel) -> int:
         inf_set = state.information_set()
         index = self.info_set_index[inf_set]
         probs = self.policy[index]
@@ -81,7 +81,7 @@ class PolicyPlayer(PlayerInterface):
         # print(f"{inf_set=}, {index=}, {choice=}, {probs=}, {history=}")
         return choice
 
-    def get_action_probs(self, state: GameState) -> List[Tuple[int, float]]:
+    def get_action_probs(self, state: GameModel) -> List[Tuple[int, float]]:
         inf_set = state.information_set()
         index = self.info_set_index[inf_set]
         probs = self.policy[index]
