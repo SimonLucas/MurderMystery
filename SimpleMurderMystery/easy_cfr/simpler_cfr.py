@@ -187,7 +187,6 @@ def info_set_cfr_test():
 
     model_factory = KuhnPoker
 
-
     policy = run_easy_cfr(model_factory, 513)
     print(f"{policy.policy_dict=}")
     print(f"{policy.regret_dict=}")
